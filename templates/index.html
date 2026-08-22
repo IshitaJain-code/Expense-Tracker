@@ -177,11 +177,11 @@
           <select name="category"
             class="w-full rounded-xl bg-surface-800 border border-surface-700 px-3 py-2 text-ink-100"
           >
+             {% for c in categories %}
 
-            <option>Food</option>
-            <option>Transport</option>
-            <option>Rent</option>
-            <option>Utilities</option>
+            <option value="{{c}}">{{c}}</option>
+
+            {% endfor %}
 
           </select>
 
@@ -212,7 +212,7 @@
     <span
       class="inline-block rounded-xl border border-surface-700 bg-surface-800 px-3 py-1 font-semibold"
     >
-      $0.00
+      ${{'%2.f' | format(total or 0)}}
     </span>
 
   </div>
@@ -264,36 +264,46 @@
 
 
         <tbody>
+          {% if expenses %}
+
+          {% for e in expenses %}
 
           <tr class="border-t border-surface-700 hover:bg-surface-800/30">
 
             <td class="px-4 py-2">
-              2025-09-25
+              {{e.date.strftime("%Y-%m-%d") if e.date else ''}}
             </td>
 
             <td class="px-4 py-2">
-              Groceries
+              {{e.description}}
             </td>
 
             <td class="px-4 py-2">
-              Food
+              {{e.category}}
             </td>
 
             <td class="px-4 py-2 text-right">
-              $25.00
+              ${{'%.2f'| format(e.amount)}}
             </td>
 
             <td class="px-4 py-2 text-right">
+
+              <form method="post"  action="{{url_for('delete',expense_id=e.id)}}" onsubmit="return confirm('Are you sure you want to delete?')">
 
               <button
                 class="text-danger hover:text-danger/80 text-xs border border-danger/30 px-3 py-1 rounded-lg"
               >
                 Delete
               </button>
+              </form>
 
             </td>
 
           </tr>
+
+          {% endfor %}
+
+          {% else %}
 
 
           <tr>
@@ -306,6 +316,8 @@
             </td>
 
           </tr>
+
+          {% endif %}
 
         </tbody>
 
